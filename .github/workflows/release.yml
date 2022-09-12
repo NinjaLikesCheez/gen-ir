@@ -36,6 +36,6 @@ jobs:
 
     # Tag the change
     - name: 🏷 Tag
-    - run: |
+      run: |
         git tag -a "v${{ steps.gen_semvar.outputs.semantic_version }}" -m "gen-ir v${{ steps.gen_semvar.outputs.semantic_version }}"
         git push
