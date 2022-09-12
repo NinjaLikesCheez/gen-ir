@@ -34,5 +34,5 @@ jobs:
 
     # Tag the change
     - run: |
-      git tag -a "v${{ steps.gen_semvar.outputs.semantic_version }}" -m "gen-ir v${{ steps.gen_semvar.outputs.semantic_version }}"
-      git push
+        git tag -a "v${{ steps.gen_semvar.outputs.semantic_version }}" -m "gen-ir v${{ steps.gen_semvar.outputs.semantic_version }}"
+        git push
