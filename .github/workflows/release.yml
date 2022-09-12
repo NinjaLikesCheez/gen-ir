@@ -13,14 +13,15 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: ⚙️ Generate SemVar
-      id: gen_semvar
-      uses: lukaszraczylo/semver-generator@v1
-      with:
-        repository_local: true
+    - name: 🔙 Get Previous tag
+      id: previous_tag
+      run: |
+        REVISION=$(git rev-list --tags --max-count=1)
+        TAG=$(git describe --tags ${REVISION})
+        echo "::set-output name=tag::$TAG"
     
     - name: 👊 Bump Version
-      run: sed 's/.*static let version = .*/static let version = "${{ steps.gen_semvar.outputs.semantic_version }}"/' Sources/gen-ir/Versions.swift
+      run: sed 's/.*static let version = .*/static let version = "${{ steps.previous_tag.outputs.tag }}"/' Sources/gen-ir/Versions.swift
     
     # Ensure a change has happened (so we don't re-release)
     - name: 🤫 Check for difference
@@ -32,11 +33,11 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git commit -am "gen-ir v${{steps.gen_semvar.outputs.semantic_version }}"
+        git commit -am "gen-ir v${{ steps.previous_tag.outputs.tag }}"
         git push
 
     # Tag the change
     - name: 🏷 Tag
       run: |
-        git tag -a "v${{ steps.gen_semvar.outputs.semantic_version }}" -m "gen-ir v${{ steps.gen_semvar.outputs.semantic_version }}"
+        git tag -a "v${{ steps.previous_tag.outputs.tag }}" -m "gen-ir v${{ steps.previous_tag.outputs.tag }}"
         git push
