@@ -3,6 +3,8 @@
 
 import PackageDescription
 
+let x = "2"
+
 let package = Package(
 	name: "gen-ir",
 	platforms: [
