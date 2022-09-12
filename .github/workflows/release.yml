@@ -1,11 +1,9 @@
 name: release new version
 
 on:
-  pull_request_target:
-    types:
-      - opened
+  push:
     branches:
-      - 'release/**'
+      - release/**
 
 jobs:
   release:
@@ -39,6 +37,9 @@ jobs:
           echo "::set-output name=tag::${{ steps.next_tag.outputs.minor }}"
         elif [[ $BUMP_TYPE == "bump-patch" ]]; then
           echo "::set-output name=tag::${{ steps.next_tag.outputs.patch }}"
+        else
+          echo "No bump label provided"
+          exit 1
         fi
 
     - name: 👊 Bump Version
