@@ -24,7 +24,8 @@ jobs:
     
     # Ensure a change has happened (so we don't re-release)
     - name: 🤫 Check for difference
-      run: ! (git diff --quiet)
+      run: |
+        ! (git diff --quiet)
 
     # Commit the change
     - name: 💍 Commit
