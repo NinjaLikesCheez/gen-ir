@@ -1,12 +1,13 @@
 name: release new version
 
 on:
-  push:
-    branches:
-      - test_branch
+  pull_request_target:
+    types:
+      - labeled
 
 jobs:
   release:
+    if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -19,9 +20,27 @@ jobs:
         REVISION=$(git rev-list --tags --max-count=1)
         TAG=$(git describe --tags ${REVISION})
         echo "::set-output name=tag::$TAG"
-    
+
+    - name: ⚙️ Generate Potential Version
+      id: next_tag
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previous_tag.outputs.tag }}
+
+    - name: ☑️ Choose Next Version
+      id: next_version
+      run: |
+        BUMP_TYPE=gh pr view --json labels -q '.labels[] | select(.name | contains("bump-")) | .name' | head -n 1
+        if [[ $BUMP_TYPE == "bump-major" ]]; then
+          echo "::set-output name=tag::${{ steps.next_tag.outputs.major }}"
+        elif [[ $BUMP_TYPE == "bump-minor" ]]; then
+          echo "::set-output name=tag::${{ steps.next_tag.outputs.minor }}"
+        elif [[ $BUMP_TYPE == "bump-patch" ]]; then
+          echo "::set-output name=tag::${{ steps.next_tag.outputs.patch }}"
+        fi
+
     - name: 👊 Bump Version
-      run: sed 's/.*static let version = .*/static let version = "${{ steps.previous_tag.outputs.tag }}"/' Sources/gen-ir/Versions.swift
+      run: sed 's/.*static let version = .*/static let version = "${{ steps.next_version.outputs.tag }}"/' Sources/gen-ir/Versions.swift
     
     # Ensure a change has happened (so we don't re-release)
     - name: 🤫 Check for difference
@@ -33,11 +52,11 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git commit -am "gen-ir v${{ steps.previous_tag.outputs.tag }}"
+        git commit -am "gen-ir v${{steps.next_version.outputs.tag }}"
         git push
 
     # Tag the change
     - name: 🏷 Tag
       run: |
-        git tag -a "v${{ steps.previous_tag.outputs.tag }}" -m "gen-ir v${{ steps.previous_tag.outputs.tag }}"
+        git tag -a "v${{ steps.next_version.outputs.tag }}" -m "gen-ir v${{ steps.next_version.outputs.tag }}"
         git push
