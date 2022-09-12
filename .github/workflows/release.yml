@@ -2,11 +2,12 @@ name: release new version
 
 on:
   push:
-    - test_branch
+    branches:
+      - test_branch
 
 jobs:
   release:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
