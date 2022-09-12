@@ -3,7 +3,9 @@ name: release new version
 on:
   pull_request_target:
     types:
-      - labeled
+      - opened
+    branches:
+      - 'release/**'
 
 jobs:
   release:
