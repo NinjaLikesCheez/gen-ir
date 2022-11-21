@@ -142,6 +142,8 @@ struct CompilerCommandRunner {
 			.replacingOccurrences(of: "-parseable-output ", with: "")
 		// for some reason this throws an error if included?
 			.replacingOccurrences(of: "-use-frontend-save-temps", with: "")
+		// if bitcode embedding is enabled, Clang will output.... textual ASM???? Why
+			.replacingOccurrences(of: "-fembed-bitcode", with: "")
 	}
 
 	/// Corrects the compiler arguments by removing options block BC generation and adding options to emit BC
