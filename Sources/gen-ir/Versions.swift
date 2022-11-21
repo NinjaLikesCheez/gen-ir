@@ -8,5 +8,5 @@
 import Foundation
 
 enum Versions {
-(printf 	)static let version = "$TAG"
+	static let version = "0.1.2"
 }
