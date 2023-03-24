@@ -18,6 +18,11 @@
 
 This tool was heavily inspired by: https://blog.digitalrickshaw.com/2016/03/14/dumping-the-swift-ast-for-an-ios-project-part-2.html ❤️
 
+
+<h2 align="center">
+Note: This repo has now moved to <a href="https://github.com/veracode/gen-ir">veracode/gen-ir</a>
+</h> 
+
 ## Prerequisites
 
 To **build** the tool, you'll need Xcode 14 and macOS 12.5 or greater.
